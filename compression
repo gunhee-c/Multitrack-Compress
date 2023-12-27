@@ -1,0 +1,97 @@
+class Audiopackage:
+    
+    #indexlist = list of [start, end]
+    #audio = audio data
+
+    indexlist = []
+    
+    def __init__(audiofile, samplerate, parsetype = spectrogram):
+
+        self.audiosegmentlist = [] 
+        self.audio = audio
+        self.samplerate = samplerate
+        self.audioIndex = find_non_silent_segments(audio, 1000, 0.001) 
+        self.parsetype = parsetype
+        if parsetype == "exact":
+            
+        parse(self.type)
+        self.length = len(audio)
+    
+    def parse(self):
+         for i in range(len(self.audioIndex)):
+            if len(indexlist) == 0:
+                indexlist.append([0, self.length])
+            else:
+                for i in range(len(indexlist)):
+                    if lengthExists(i):
+                        
+                        indexlist[i].append(audioIndex[i])
+                    else:
+                        indexlist.append([audioIndex[i]])
+       
+        if self.parsetype == "exact":
+            compareExact()
+        elif self.parsetype == "spectrogram":
+            compareSpectrogram()
+        else:
+            print("Error: Invalid type")
+
+    def lengthExists(self, i):
+        if self.parsetype == "exact":
+            for i in range(len(indexlist)):
+                for j in range(len(audioIndex)):
+                    if (audioIndex[j][1] - audioIndex[j][0]) in indexlist[i]:
+                        return True
+        else:
+            for i in range(len(indexlist)):
+                for j in range(len(audioIndex)):
+                    if abs((audioIndex[j][1] - audioIndex[j][0] - indexlist[i])/indexlist[i]) < 0.1
+                        return True
+        return False
+
+    def parseExact(self):
+        
+        for i in range(len(self.audioIndex)):
+            if len(indexlist) == 0:
+                indexlist.append([0, self.length])
+            else:
+                for i in range(len(indexlist)):
+                    if lengthExists(i):
+                        
+                        indexlist[i].append(audioIndex[i])
+                    else:
+                        indexlist.append([audioIndex[i]])
+
+        #if a segment exact same, then append
+        # indexlist[9].append(index)
+            #compare length first
+            #if length is same, then compare each sample
+        #else indexlist.append(AudioSegment(audio, length, index))
+        pass
+    def parseSimilar(self):
+        pass
+    def parseSpectrogram(self):
+        pass
+
+
+    def print(self):
+        for i in range (len(self.audiosegmentlist)):
+            print(self.audiosegmentlist[i])
+    def export(self):
+        export = np.zeros(self.length)
+        ##add all data iteratively
+        return export
+
+class AudioSegment:
+    #처음 불릴때
+    def __init__(self, audio, length, index, amplitude = 1):
+        self.indexlist = [] 
+        indexlist.append(index)
+        self.length = length
+        self.audio = audio
+        self.amplitude = amplitude
+    def __str__(self):
+        return "SampleLength: " + str(self.length) + " , IndexList: " + str(self.indexlist)
+    def append(self, index, amplitude = 1):
+        #초기 샘플보다 후기 샘플이 더 adaptable 할 경우
+        self.indexlist.append(index)
