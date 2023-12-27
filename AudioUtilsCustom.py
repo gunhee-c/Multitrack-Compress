@@ -6,6 +6,8 @@ import scipy.signal as signal
 import soundfile as sf
 import matplotlib.pyplot as plt
 from scipy.io import wavfile
+import re
+
 #Plotting
 def plot_waveform(sample, isLibrosa = False):
 
@@ -119,12 +121,10 @@ def get_cosine_similarity(listA, listB):
 #cosine similarity의 계산. 길이가 다른 경우도 고려함.
 def compare_similar(listOrigin, listNew, isLibrosa = False):
     listA, listB = match_list(listOrigin, listNew)
-    if isLibrosa:
-        listA = listOrigin
-        listB = listNew
-    else:
-        listA = np.mean(listOrigin, axis=1)
-        listB = np.mean(listNew, axis=1)
+
+    if isLibrosa == False:
+        listA = np.mean(listA, axis=1)
+        listB = np.mean(listB, axis=1)
     if len(listA) > 10 and len(listB) > 10:
         listA = blur_list(listA, 10)
         listB = blur_list(listB, 10)
@@ -148,4 +148,9 @@ def compare_spectrogram(data1, data2):
     # Compute cosine similarity (1 - cosine distance)
     similarity = 1-cosine(flat_spec1, flat_spec2)
     return similarity
+
+def extract_filename(filepath):
+    """Extract the filename from a full file path using regex."""
+    match = re.search(r'[^\\]+$', filepath)
+    return match.group() if match else None
 
