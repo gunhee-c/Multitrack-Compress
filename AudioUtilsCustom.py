@@ -8,6 +8,12 @@ import matplotlib.pyplot as plt
 from scipy.io import wavfile
 import re
 
+
+"""
+쓰레기함수모음집
+"""
+
+
 #Plotting
 def plot_waveform(sample, isLibrosa = False):
 
@@ -149,6 +155,7 @@ def compare_spectrogram(data1, data2):
     similarity = 1-cosine(flat_spec1, flat_spec2)
     return similarity
 
+#Filename을 구하는데 사용함
 def extract_filename(filepath):
     """Extract the filename from a full file path using regex."""
     match = re.search(r'[^\\]+$', filepath)

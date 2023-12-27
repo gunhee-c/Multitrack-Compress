@@ -27,13 +27,14 @@ class Audiopackage:
         #print("Audio Index length: ", self.audioIndex)
         self.parse()
     
+    #length가 같은지 확인 - exact에 사용
     def lengthExists(self, i, duration):
-
         if duration == self.audiosegmentlist[i].length:
             #print("Length Exists")
             return True
         return False
     
+    #length가 비슷한지 확인 - similar, spectrogram에 사용
     def lengthSimilar(self, i, duration):
         origin = self.audiosegmentlist[i].length
         if abs((duration - origin)/origin) < 0.1:
@@ -71,7 +72,6 @@ class Audiopackage:
                     self.apply_compare_spectrogram(target, duration, start, target_lrfile)
 
     def apply_compare_exact(self, target, duration, start):
-
         for i in range(self.segmentSize):
             if self.lengthExists(i, duration) == True:
                 if compare_exact(self.audiosegmentlist[i].audio, target) == True:
@@ -90,6 +90,8 @@ class Audiopackage:
                     return
         self.audiosegmentlist.append(AudioSegment(target, duration, start))
         self.segmentSize += 1
+
+        #TODO: spectrogram이 너무 크대요 UserWarning: n_fft=2048 is too large for input signal of length=1115
     def apply_compare_spectrogram(self, target, duration, start, target_lrfile):
         for i in range(self.segmentSize):
             if self.lengthSimilar(i, duration) == True:
@@ -105,20 +107,19 @@ class Audiopackage:
 
 
 
-    def print(self):
-        for i in range (len(self.audiosegmentlist)):
-            print(self.audiosegmentlist[i])
     
     def sumSegments(self):
         ans = 0 
         for i in range(self.segmentSize):
             ans += self.audiosegmentlist[i].length
         return ans
+    
+    #압축률을 compratio로 대략적으로 구함. 전체 오디오 길이 vs Segment 길이의 합
     def compratio(self):
         return self.sumSegments()/self.length
     
     def printInfo(self):
-        print("Audio Nane: ", self.name)
+        print("Audio Name: ", self.name)
         print("Audio Length: ", self.length)
         #print("Audio Index length: ", self.audioIndex)
         print("Segment Size: ", self.segmentSize)
@@ -134,10 +135,8 @@ class AudioSegment:
         self.length = length
         self.audio = audio
         self.amplitude = amplitude
-
         self.lrfile = lrfile
-    def __str__(self):
-        return "SampleLength: " + str(self.length) + " , IndexList: " + str(self.indexlist)
+
     def append(self, index, amplitude = 1):
         #초기 샘플보다 후기 샘플이 더 adaptable 할 경우
         self.indexlist.append(index)
