@@ -27,25 +27,30 @@ class Audiopackage:
         #print("Audio Index length: ", self.audioIndex)
         self.parse()
     
-    def lengthExists(self, duration):
-        for i in range(self.segmentSize):
-            if duration == self.audiosegmentlist[i].length:
-                #print("Length Exists")
-                return True
+    def lengthExists(self, i, duration):
+
+        if duration == self.audiosegmentlist[i].length:
+            #print("Length Exists")
+            return True
         return False
     
-    def lengthSimilar(self, duration):
-        for i in range(self.segmentSize):
-            origin = self.audiosegmentlist[i].length
-            if abs((duration - origin)/origin) < 0.1:
-                print("Length Similar")
-                return True
+    def lengthSimilar(self, i, duration):
+        origin = self.audiosegmentlist[i].length
+        if abs((duration - origin)/origin) < 0.1:
+            #print("Length Similar")
+            return True
+        #print("Length Not Similar")
         return False
     
     def parse(self):
-         for i in range(self.audioIndexSize):
+        #print(len(self.lrfile))
+        #print("is the length of LR file")
+        for i in range(self.audioIndexSize):
             if self.parsetype == "spectrogram":
+                #print("Making it")
                 target_lrfile = self.lrfile[self.audioIndex[i][0]:self.audioIndex[i][1]]
+            #print(len(target_lrfile))
+            #print("is the length of LR file")
             target = self.audio[self.audioIndex[i][0]:self.audioIndex[i][1]]
             start = self.audioIndex[i][0]
             end = self.audioIndex[i][1]
@@ -53,7 +58,7 @@ class Audiopackage:
             if self.segmentSize == 0:
                 #print("First Sample Added")
                 if self.parsetype == "spectrogram":
-                    self.audiosegmentlist.append(AudioSegment(target, duration, start, self.lrfile[start:end], islibrosa=True))
+                    self.audiosegmentlist.append(AudioSegment(target, duration, start, lrfile = self.lrfile[start:end], islibrosa=True))
                 else:
                     self.audiosegmentlist.append(AudioSegment(target, duration, start))
                 self.segmentSize += 1
@@ -68,33 +73,31 @@ class Audiopackage:
     def apply_compare_exact(self, target, duration, start):
 
         for i in range(self.segmentSize):
-            if self.lengthExists(duration) == True:
+            if self.lengthExists(i, duration) == True:
                 if compare_exact(self.audiosegmentlist[i].audio, target) == True:
                     self.audiosegmentlist[i].append(start)
                     return
-            else:
-                self.audiosegmentlist.append(AudioSegment(target, duration, start))
-                self.segmentSize += 1
+        #if no exact match, then append
+        self.audiosegmentlist.append(AudioSegment(target, duration, start))
+        self.segmentSize += 1
 
             
     def apply_compare_similar(self, target, duration, start):
         for i in range(self.segmentSize):
-            if self.lengthSimilar(duration) == True:
+            if self.lengthSimilar(i, duration) == True:
                 if compare_similar(self.audiosegmentlist[i].audio, target) > 0.99:
                     self.audiosegmentlist[i].append(start)
                     return
-            else:
-                self.audiosegmentlist.append(AudioSegment(target, duration, start))
-                self.segmentSize += 1
+        self.audiosegmentlist.append(AudioSegment(target, duration, start))
+        self.segmentSize += 1
     def apply_compare_spectrogram(self, target, duration, start, target_lrfile):
         for i in range(self.segmentSize):
-            if self.lengthSimilar(duration) == True:
+            if self.lengthSimilar(i, duration) == True:
                 if compare_spectrogram(self.audiosegmentlist[i].lrfile, target_lrfile) > 0.99:
                     self.audiosegmentlist[i].append(start)
                     return
-            else:
-                self.audiosegmentlist.append(AudioSegment(target, duration, start, target_lrfile, islibrosa=True))
-                self.segmentSize += 1
+        self.audiosegmentlist.append(AudioSegment(target, duration, start, lrfile = target_lrfile, islibrosa=True))
+        self.segmentSize += 1
         # indexlist[9].append(index)
             #compare length first
             #if length is same, then compare each sample
@@ -131,8 +134,8 @@ class AudioSegment:
         self.length = length
         self.audio = audio
         self.amplitude = amplitude
-        if islibrosa:
-            self.lrfile = lrfile
+
+        self.lrfile = lrfile
     def __str__(self):
         return "SampleLength: " + str(self.length) + " , IndexList: " + str(self.indexlist)
     def append(self, index, amplitude = 1):
