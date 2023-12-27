@@ -1,3 +1,5 @@
+from AudioUtilsCustom import *
+
 class Audiopackage:
     
     #indexlist = list of [start, end]
@@ -5,7 +7,7 @@ class Audiopackage:
 
     indexlist = []
     
-    def __init__(audiofile, samplerate, parsetype = spectrogram):
+    def __init__(audiofile, samplerate, parsetype = "spectrogram"):
 
         self.audiosegmentlist = [] 
         self.audio = audio
@@ -13,8 +15,8 @@ class Audiopackage:
         self.audioIndex = find_non_silent_segments(audio, 1000, 0.001) 
         self.parsetype = parsetype
         if parsetype == "exact":
-            
-        parse(self.type)
+
+            parse(self.type)
         self.length = len(audio)
     
     def parse(self):
@@ -23,46 +25,31 @@ class Audiopackage:
                 indexlist.append([0, self.length])
             else:
                 for i in range(len(indexlist)):
-                    if lengthExists(i):
-                        
-                        indexlist[i].append(audioIndex[i])
-                    else:
-                        indexlist.append([audioIndex[i]])
-       
-        if self.parsetype == "exact":
-            compareExact()
-        elif self.parsetype == "spectrogram":
-            compareSpectrogram()
-        else:
-            print("Error: Invalid type")
+                    if self.parsetype == "exact":
+                        if lengthExists(i) and compareExact() == True:
+                            indexlist[i].append(audioIndex[i])
+                    elif self.parsetype == "spectrogram":
+                        if lengthSimilar(i) and compareSpectrogram() == True:
+                            indexlist[i].append(audioIndex[i])
+
 
     def lengthExists(self, i):
-        if self.parsetype == "exact":
-            for i in range(len(indexlist)):
-                for j in range(len(audioIndex)):
-                    if (audioIndex[j][1] - audioIndex[j][0]) in indexlist[i]:
-                        return True
-        else:
-            for i in range(len(indexlist)):
-                for j in range(len(audioIndex)):
-                    if abs((audioIndex[j][1] - audioIndex[j][0] - indexlist[i])/indexlist[i]) < 0.1
-                        return True
+
+        for i in range(len(indexlist)):
+            for j in range(len(audioIndex)):
+                if (audioIndex[j][1] - audioIndex[j][0]) in indexlist[i]:
+                    return True
+
         return False
+    def lengthSimilar(self, i):
+        for i in range(len(indexlist)):
+            for j in range(len(audioIndex)):
+                if abs((audioIndex[j][1] - audioIndex[j][0] - indexlist[i])/indexlist[i]) < 0.1:
+                    return True
 
-    def parseExact(self):
-        
-        for i in range(len(self.audioIndex)):
-            if len(indexlist) == 0:
-                indexlist.append([0, self.length])
-            else:
-                for i in range(len(indexlist)):
-                    if lengthExists(i):
-                        
-                        indexlist[i].append(audioIndex[i])
-                    else:
-                        indexlist.append([audioIndex[i]])
+    def compareExact(self):
+        pass
 
-        #if a segment exact same, then append
         # indexlist[9].append(index)
             #compare length first
             #if length is same, then compare each sample
