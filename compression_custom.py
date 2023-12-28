@@ -37,11 +37,13 @@ class Audiopackage:
     #length가 비슷한지 확인 - similar, spectrogram에 사용
     def lengthSimilar(self, i, duration):
         origin = self.audiosegmentlist[i].length
-        if abs((duration - origin)/origin) < 0.1:
-            #print("Length Similar")
-            return True
-        #print("Length Not Similar")
-        return False
+        # 이렇게 짜면 사수가 이놈 한다
+        # if abs((duration - origin)/origin) < 0.1:
+        #     #print("Length Similar")
+        #     return True
+        # #print("Length Not Similar")
+        # return False
+        return origin != 0 and abs((duration - origin)/origin) < 0.1
     
     def parse(self):
         #print(len(self.lrfile))

@@ -138,8 +138,11 @@ def compare_similar(listOrigin, listNew, isLibrosa = False):
     return get_cosine_similarity(listA, listB)
 
 #compare_spectrogram의 하위 function
-def get_spectrogram(data):
-    spectrogram = np.abs(lr.stft(data))
+def get_spectrogram(data, max_fft = 2048):
+    signal_length = len(data)
+    n_fft = 2**int(np.floor(np.log2(signal_length)))
+    n_fft = max(min(n_fft, max_fft), 4)
+    spectrogram = np.abs(lr.stft(data, n_fft = n_fft))
     return spectrogram
 
 #두 audio segment의 spectrogram을 형성 후 cosine similarity를 계산합니다.
