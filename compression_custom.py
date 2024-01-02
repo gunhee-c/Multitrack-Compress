@@ -18,7 +18,9 @@ class Audiopackage:
             self.lrfile, self.samplerate = lr.load(audiofile, sr = self.samplerate)
         
         self.audiosegmentlist = [] 
-        self.audioIndex = find_blocks(audio) 
+        #Original:
+        #self.audioIndex = find_blocks(audio) 
+        self.audioIndex = purge_small_segments(find_blocks(audio), 200) 
         self.length = len(self.audio)
         self.segmentSize = 0
         self.audioIndexSize = len(self.audioIndex)
@@ -72,6 +74,7 @@ class Audiopackage:
                     self.apply_compare_similar(target, duration, start)
                 elif self.parsetype == "spectrogram":
                     self.apply_compare_spectrogram(target, duration, start, target_lrfile)
+
 
     def apply_compare_exact(self, target, duration, start):
         for i in range(self.segmentSize):

@@ -164,3 +164,9 @@ def extract_filename(filepath):
     match = re.search(r'[^\\]+$', filepath)
     return match.group() if match else None
 
+def purge_small_segments(segments, threshold):
+    new_segments = []
+    for segment in segments:
+        if segment[1] - segment[0] > threshold:
+            new_segments.append(segment)
+    return new_segments
